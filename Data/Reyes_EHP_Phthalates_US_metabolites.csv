@@ -1,0 +1,11 @@
+"metabolite","metaName","metaAbbrev","phthName","phthAbbrev","FUE","MWm","MWp","TDI"
+"urxcnp","mono(carboxyisononyl) phthalate ","MCNP","diisodecyl phthalate","DIDP",9.9,336.38,446.68,250
+"urxcop","mono(carboxyisoctyl) phthalate ","MCOP","diisononyl phthalate","DINP",9.9,322.36,418.61,150
+"urxecp","mono-2-ethyl-5-carboxypentyl phthalate ","MECPP","di(2-ethylhexyl) phthalate","DEHP",13.2,308.33,390.56,50
+"urxmbp","mono-n-butyl phthalate ","MBP","di-n-butyl phthalate","DBP",84,222.24,278.34,10
+"urxmhh","mono-(2-ethyl-5-hydroxyhexyl) phthalate ","MEHHP","di(2-ethylhexyl) phthalate","DEHP",14.9,294.35,390.56,50
+"urxmhp","mono-(2-ethyl)-hexyl phthalate ","MEHP","di(2-ethylhexyl) phthalate","DEHP",6.2,278.34,390.56,50
+"urxmib","mono-isobutyl phthalate ","MIBP","diisobutyl phthalate","DIBP",70.3,222.24,278.34,1250
+"urxmnp","mono-isononyl phthalate ","MINP","diisononyl phthalate","DINP",3,292.37,418.61,150
+"urxmoh","mono-(2-ethyl-5-oxohexyl) phthalate ","MEOHP","di(2-ethylhexyl) phthalate","DEHP",10.9,292.33,390.56,50
+"urxmzp","mono-benzyl phthalate ","MBZP","butyl benzyl phthalate","BBP",73,256.25,312.36,500

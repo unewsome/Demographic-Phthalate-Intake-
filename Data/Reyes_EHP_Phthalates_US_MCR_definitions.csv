@@ -1,0 +1,71 @@
+variable,definition,units
+seqn,NHANES code for respondent sequence number,NA
+sddsrvyr,NHANES code that represents the two-year data release cycle number,NA
+wtsa2yr,NHANES code that represents the four-year data release cycle number,NA
+wtsb2yr,NHANES code for environmental B 2-year weights,NA
+wtsph4yr,NHANES code for phthalate Subsample 4 year Mec Weight,NA
+wtsph2yr,NHANES code for phthalate Subsample 2 year Mec Weight,NA
+wtint2yr,NHANES code for full sample 2 year interview weight,NA
+wtint4yr,NHANES code for full sample 4 year interview weight,NA
+wtmec2yr,NHANES code for full sample 2 year MEC exam weight,NA
+wtmec4yr,NHANES code for full sample 4 year MEC exam weight,NA
+riagendr,NHANES code for gender of the participant,NA
+ridageyr,NHANES code for age in years of the participant at the time of screening,NA
+ridreth1,NHANES code for recode of reported race and Hispanic origin information,NA
+sdmvpsu,NHANES code for masked variance unit pseudo-PSU variable for variance estimation,NA
+sdmvstra,NHANES code for masked variance unit pseudo-stratum variable for variance estimation,NA
+bmxwt,NHANES code for weight,kg
+bmxht,NHANES code for standing height,cm
+urxcnp,NHANES code for Mono(carboxynonyl) Phthalate ,ng/mL
+urxcop,NHANES code for Mono(carboxyoctyl) Phthalate ,ng/mL
+urxecp,NHANES code for Mono-2-ethyl-5-carboxypentyl phthalate ,ng/mL
+urxmbp,NHANES code for Mono-n-butyl phthalate ,ng/mL
+urxmhh,NHANES code for Mono-(2-ethyl-5-hydroxyhexyl) phthalate ,ng/mL
+urxmhp,NHANES code for Mono-(2-ethyl)-hexyl phthalate ,ng/mL
+urxmib,NHANES code for Mono-isobutyl phthalate,ng/mL
+urxmnp,NHANES code for Mono-isononyl phthalate,ng/mL
+urxmoh,NHANES code for Mono-(2-ethyl-5-oxohexyl) phthalate,ng/mL
+urxmzp,NHANES code for Mono-benzyl phthalate,ng/mL
+urxucr,"NHANES code for creatinine, urine ",mg/dL
+CE,creatinine excretion rate developed by Mage et al using information about age - race - gender - weight - height,mg/kg-day
+c_urxcnp,creatinine corrected cocentration of urxcnp,ug/daL
+di_urxcnp,daily intake concentration of urxcnp,ug/kg-day
+c_urxcop,creatinine corrected cocentration of urxcop,ug/daL
+di_urxcop,daily intake concentration of urxcop,ug/kg-day
+c_urxecp,creatinine corrected cocentration of urxecp,ug/daL
+di_urxecp,daily intake concentration of urxecp,ug/kg-day
+c_urxmbp,creatinine corrected cocentration of urxmbp,ug/daL
+di_urxmbp,daily intake concentration of urxmbp,ug/kg-day
+c_urxmhh,creatinine corrected cocentration of urxmhh,ug/daL
+di_urxmhh,daily intake concentration of urxmhh,ug/kg-day
+c_urxmhp,creatinine corrected cocentration of urxmhp,ug/daL
+di_urxmhp,daily intake concentration of urxmhp,ug/kg-day
+c_urxmib,creatinine corrected cocentration of urxmib,ug/daL
+di_urxmib,daily intake concentration of urxmib,ug/kg-day
+c_urxmnp,creatinine corrected cocentration of urxmnp,ug/daL
+di_urxmnp,daily intake concentration of urxmnp,ug/kg-day
+c_urxmoh,creatinine corrected cocentration of urxmoh,ug/daL
+di_urxmoh,daily intake concentration of urxmoh,ug/kg-day
+c_urxmzp,creatinine corrected cocentration of urxmzp,ug/daL
+di_urxmzp,daily intake concentration of urxmzp,ug/kg-day
+di_DIDP,daily intake of DIDP,ug/kg-day
+di_DINP,daily intake of DINP,ug/kg-day
+di_DEHP,daily intake of DEHP,ug/kg-day
+di_DBP,daily intake of DBP,ug/kg-day
+di_DIBP,daily intake of DIBP,ug/kg-day
+di_BBP,daily intake of BBP,ug/kg-day
+HQ_DIDP,hazard quotient of DIDP,unitless
+HQ_DINP,hazard quotient of DINP,unitless
+HQ_DEHP,hazard quotient of DEHP,unitless
+HQ_DBP,hazard quotient of DBP,unitless
+HQ_DIBP,hazard quotient of DIBP,unitless
+HQ_BBP,hazard quotient of BBP,unitless
+HQmax,maximum hazard quotient,unitless
+label_HQmax,phthalate that produced the maximum hazard quotient,NA
+HI,hazard index,unitless
+MCR,maximum cumulative ratio,unitless
+grp,group identification,NA
+AgeA,designation of age grouping ,NA
+Gender,designation of gender grouping,NA
+Cycle,NHANES cycle,NA
+Race,designation of ethnicity grouping,NA
