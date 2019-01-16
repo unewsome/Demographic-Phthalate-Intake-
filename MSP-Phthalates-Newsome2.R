@@ -16,8 +16,8 @@ MCQ1516<-read_xpt('C:/Users/unews/Dropbox/NSS/Demographic-Phthalate-Intake-/Data
 SSMHHT1516<-read_xpt('C:/Users/unews/Dropbox/NSS/Demographic-Phthalate-Intake-/Data/SSMHHT_I_1516.XPT')
 
 
-#Merge groups to find relative information.  Focus on 2015 - 2016 data and specific columns of each data frame
 
+#Merge groups to find relative information.  Focus on 2015 - 2016 data and specific columns of each data frame
 pht_demo<-merge(PTH1516,DEMO1516,all.x=FALSE)
 pht_demo_bmi<-merge(pht_demo,BMX1516,all.x=FALSE)
 pht_demo_bmi_cbq<-merge(pht_demo_bmi,CBQ1516,all.x=FALSE)
@@ -26,10 +26,13 @@ pht_demo_bmi_cbq_diq_inq<-merge(pht_demo_bmi_cbq_diq,INQ1516,all.x=FALSE)
 pht_all<-merge(pht_demo_bmi_cbq_diq_inq,MCQ1516,all.x=FALSE)
 
 pht_all2<-pht_all%>%
-  select(1:34,37,38,40,41,90,106,107,111,113,114,116:120,173,186,191,208,210,220,226,228,230,234,235,248,250,258)
+  select(1:34,36,37,38,40,41,90,106,107,111,113,114,116:120,173,186,191,208,210,220,226,228,230,234,235,248,250,258)%>%
+  filter(RIDAGEYR>=18)
 
 total_pht<-pht_all2%>%
   mutate(total_pht=URXCNP+URXCOP+URXECP+URXMBP+URXMC1+URXMEP+URXMHP+URXMNP+URXMOH+URXMZP+URXMIB+URXHIBP+URXMCOH+URXMHBP+URXMHNC)
+
+
 
 demo_race<-total_pht%>%
   group_by(RIDRETH1,RIDRETH3)%>%
@@ -121,12 +124,12 @@ ggplot(Cancer_race, aes(x=Race_Ethnicity,y=mean_pht))+
 Race_tally<-table(total_pht$RIDRETH3)
 Race_tally
 
-totalMA<-Race_tally[1] #636
-totalH<-Race_tally[2] #404
-totalW<-Race_tally[3] #942
-totalAA<-Race_tally[4] #746
-totalAs<-Race_tally[5] #321
-totalMr<-Race_tally[6] #156
+totalMA<-Race_tally[1] #324
+totalH<-Race_tally[2] #235
+totalW<-Race_tally[3] #563
+totalAA<-Race_tally[4] #421
+totalAs<-Race_tally[5] #205
+totalMr<-Race_tally[6] #81
 
 # Cancer_ratio_demo<-total_pht%>%
 #   group_by(RIDRETH1,RIDRETH3,MCQ220)%>%
@@ -169,7 +172,7 @@ totalMr<-Race_tally[6] #156
 #   group_by(Race_Ethnicity,Cancer_Diagnosis)%>%
 #   summarise(countc=count(Cancer_Diagnosis))
  
-total_pht%>%
+newpht<-total_pht%>%
     mutate(Race_Ethnicity = case_when(   
       RIDRETH1==1~"Mexican American",
       RIDRETH1==2~"Hispanic",
@@ -177,9 +180,132 @@ total_pht%>%
       RIDRETH1==4~"Non-Hispanic Black",
       RIDRETH1==5&RIDRETH3==6~"Non-Hispanic Asian",
       RIDRETH1==5&RIDRETH3==7~"Non-Hispanic Multiracial"))%>%
-  mutate(Cancer_Diagnosis = case_when(
+    mutate(Cancer_Diagnosis = case_when(
           MCQ220==1~1,
           MCQ220==2~2,
           MCQ220==9~3,
           is.na(MCQ220)~3
-      ))
+      ))%>%
+    mutate(Thyroid_issues = case_when(
+       MCQ160M==1~1,
+       MCQ160M==2~2,
+       MCQ160M==9~3,
+      is.na(MCQ220)~3))%>%
+    mutate(Diabetes = case_when(
+      DIQ010==1~1,
+      DIQ010==2~2,
+      DIQ010==3~4,#borderline
+      is.na(DIQ010)~3))%>%#don't know
+    mutate(AgeClass=case_when(
+      RIDAGEYR>=18 & RIDAGEYR<29~"18-29 yoa",
+      RIDAGEYR>=30 & RIDAGEYR<49~"30-49 yoa",
+      RIDAGEYR>=50 & RIDAGEYR<65~"50-65 yoa",
+      RIDAGEYR>=65~"65 and up yoa",
+      is.na(RIDAGEYR)~"Age Unknown"))
+
+
+saveRDS(newpht, file="C:/Users/unews/Dropbox/NSS/Demographic-Phthalate-Intake-/Adult_Phthalate_Obs/Adult_Phthalate_Exploration/Phthalate_Exploration.Rds")
+
+yesBlack<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Non-Hispanic Black")
+noBlack<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Non-Hispanic Black")
+idkBlack<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Non-Hispanic Black")
+
+yesMA<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Mexican American")
+noMA<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Mexican American")
+idkMA<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Mexican American")
+
+yesHS<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Hispanic")
+noHS<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Hispanic")
+idkHS<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Hispanic")
+
+
+yesW<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Non-Hispanic White")
+noW<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Non-Hispanic White")
+idkW<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Non-Hispanic White")
+
+yesAs<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+noAs<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+idkAs<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+
+yesMr<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+noMr<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+idkMr<-table(newpht$Cancer_Diagnosis==3&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+
+yesBlack+noBlack+idkBlack
+yesBlack/totalAA
+
+yesW+noW+idkW
+yesW/totalW
+
+yesBlack/(yesBlack+noBlack)
+
+yesW/(yesW+noW)
+
+table(newpht$Thyroid_issues)
+
+thyBlack<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Non-Hispanic Black")
+nothyBlack<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Non-Hispanic Black")
+idkthyBlack<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Non-Hispanic Black")
+
+thyMA<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Mexican American")
+nothyMA<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Mexican American")
+idkthyMA<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Mexican American")
+
+thyHS<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Hispanic")
+nothyHS<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Hispanic")
+idkthyHS<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Hispanic")
+
+
+thyW<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Non-Hispanic White")
+nothyW<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Non-Hispanic White")
+idkthyW<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Non-Hispanic White")
+
+thyAs<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+nothyAs<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+idkthyAs<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Non-Hispanic Asian")
+
+thyMr<-table(newpht$Thyroid_issues==1&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+nothyMr<-table(newpht$Thyroid_issues==2&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+idkthyMr<-table(newpht$Thyroid_issues==3&newpht$Race_Ethnicity=="Non-Hispanic Multiracial")
+
+thyBlack/totalAA
+thyW/totalW
+
+Thyroid<-newpht%>%
+  group_by(Thyroid_issues)%>%
+  summarise(mean_pht=mean(total_pht,na.rm=TRUE))
+
+Thyroid$Diagnosis<-c("Yes", "No", "Unknown")
+
+ggplot(Thyroid, aes(x=Diagnosis,y=mean_pht))+
+  geom_col()+xlab("Incidence of Thyroid Problems")+ylab('Mean Phthalate Metabolite in Urine (ng/mL')+
+  ggtitle(      'Comparison of Phthalate Metabolite Excretion by Recognition of Thyroid Problem')
+
+
+Diabetes<-newpht%>%
+  group_by(Diabetes)%>%
+  summarise(mean_pht=mean(total_pht,na.rm=TRUE))
+
+Diabetes$Diagnosis<-c("Yes", "No", "Borderline", "Unknown")
+
+ggplot(Diabetes, aes(x=Diagnosis,y=mean_pht))+
+  geom_col()+xlab("Incidence of Diabetes")+ylab('Mean Phthalate Metabolite in Urine (ng/mL')+
+  ggtitle(      'Comparison of Phthalate Metabolite Excretion by Diagnosis of Diabetes')
+
+AgeClass<-newpht%>%
+  group_by(AgeClass)%>%
+  summarise(mean_pht=mean(total_pht,na.rm=TRUE))
+
+ggplot(AgeClass, aes(x=AgeClass,y=mean_pht))+geom_col()+xlab("Age")+ylab('Mean Phthalate Metabolite in Urine (ng/ml')+
+  ggtitle(         'Comparison of Phthalate Metabolite Excretion by Age)')
+
+
+Age_Gender<-newpht%>%
+  group_by(RIAGENDR,AgeClass)%>%
+  summarise(mean_pht=mean(total_pht,na.rm=TRUE))
+
+ggplot(newpht, aes(newpht$total_pht))+geom_histogram()
+
+
+#Statistical Significance
+# See http://onlinestatbook.com/2/tests_of_means/difference_means.html
