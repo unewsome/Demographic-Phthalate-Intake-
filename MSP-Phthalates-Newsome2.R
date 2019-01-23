@@ -181,24 +181,24 @@ newpht<-total_pht%>%
       RIDRETH1==5&RIDRETH3==6~"Non-Hispanic Asian",
       RIDRETH1==5&RIDRETH3==7~"Non-Hispanic Multiracial"))%>%
     mutate(Cancer_Diagnosis = case_when(
-          MCQ220==1~1,
-          MCQ220==2~2,
-          MCQ220==9~3,
-          is.na(MCQ220)~3
+          MCQ220==1~"Positive diagnosis",
+          MCQ220==2~"Negative diagnosis",
+          MCQ220==9~"Unknown diagnosis",
+          is.na(MCQ220)~"Unknown diagnosis"
       ))%>%
     mutate(Thyroid_issues = case_when(
-       MCQ160M==1~1,
-       MCQ160M==2~2,
-       MCQ160M==9~3,
-      is.na(MCQ220)~3))%>%
+       MCQ160M==1~"Positive diagnosis",
+       MCQ160M==2~"Negative diagnosis",
+       MCQ160M==9~"Unknown diagnosis",
+      is.na(MCQ220)~"Unknown diagnosis"))%>%
     mutate(Diabetes = case_when(
-      DIQ010==1~1,
-      DIQ010==2~2,
-      DIQ010==3~4,#borderline
-      is.na(DIQ010)~3))%>%#don't know
+      DIQ010==1~"Positive diagnosis",
+      DIQ010==2~"Negative diagnosis",
+      DIQ010==3~"Borderline diagnosis",#borderline
+      is.na(DIQ010)~"Unknown diagnosis"))%>%#don't know
     mutate(AgeClass=case_when(
-      RIDAGEYR>=18 & RIDAGEYR<29~"18-29 yoa",
-      RIDAGEYR>=30 & RIDAGEYR<49~"30-49 yoa",
+      RIDAGEYR>=18 & RIDAGEYR<=29~"18-29 yoa",
+      RIDAGEYR>=30 & RIDAGEYR<=49~"30-49 yoa",
       RIDAGEYR>=50 & RIDAGEYR<65~"50-65 yoa",
       RIDAGEYR>=65~"65 and up yoa",
       is.na(RIDAGEYR)~"Age Unknown"))%>%
@@ -208,7 +208,7 @@ newpht<-total_pht%>%
     ))
 
 
-saveRDS(newpht, file="C:/Users/unews/Dropbox/NSS/Demographic-Phthalate-Intake-/Adult_Phthalate_Obs/Adult_Phthalate_Exploration/Phthalate_Exploration.Rds")
+saveRDS(newpht, file="C:/Users/unews/nss_data_science/Demographic-Phthalate-Intake-/Adult_Phthalate_Obs/Adult_Phthalate_Exploration/Phthalate_Exploration.Rds")
 
 yesBlack<-table(newpht$Cancer_Diagnosis==1&newpht$Race_Ethnicity=="Non-Hispanic Black")
 noBlack<-table(newpht$Cancer_Diagnosis==2&newpht$Race_Ethnicity=="Non-Hispanic Black")
@@ -310,34 +310,155 @@ Age_Gender<-newpht%>%
 
 ggplot(newpht, aes(newpht$total_pht))+geom_histogram()
 
+a<-"Gender"
 
-data<-eventReactive(input$go, {phth1%>%
-    group_by(input$f1,input$f2,input$f3)%>%
+data1<-phth1%>%
+    group_by(`Race/Ethnicity`)%>%
     summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE))
-  mutate(Diagnosis= case_when (
-    input$f1=="Gender" & input$f2="Blank" & input$f3="Blank"~c("Female","Male"),
-    input$f1=="Race/Ethnicity" & input$f2="Blank" & input$f3="Blank"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
-    input$f1=="Age" & input$f2="Blank" & input$f3="Blank"~Diagnosis,
-    input$f1=="Cancer?" & input$f2=="Blank"& input$f3=="Blank"~c("Yes", "No", "Unknown"),
-    input$f1=="Thyroid Issue?" & input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Unknown"),
-    input$f1=="Diabetes?"& input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Borderline", "Unknown")
-    input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~
-      input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"
-    input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~
-      input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~
-      input$f1=="Gender"& input$f2=="Diabetes?" & input$f3=="Blank"
-    input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
-    input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~c("Hispanic Male","Hispanic Female","Mexican American Female","Mexican American Male", "Non-Hispanic Asian Female","Non-Hispanic Asian Male","Non-Hispanic Black Female", "Non-Hispanic Black Male","Non-Hispanic Multi-racial Female", "Non-Hispanic Multi-racial Male","Non-Hispanic White Female", "Non-Hispanic White Male"),
-    input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
-    input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
-    input$f1=="Gender"& input$f2=="Diabetes" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Borderline Diagnosis","Male-Borderline Diagnosis", "Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
-    input$f1=="Age"& input$f2=="Gender" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa")
-    input$f1=="Age"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~
-      input$f1=="Age"& input$f2=="Cancer?" & input$f3=="Blank"~c("Positive 18-29 yoa",)
-    input$f1=="Age"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~
-      input$f1=="Age"& input$f2=="Diabetes?" & input$f3=="Blank"~
-      input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"
 
+data1$Diagnosis<-case_when (
+    nrow(data1)==2 & colnames(data1[1])=="Gender"~c("Female","Male"),
+    nrow(data1)==6 & colnames(data1[1])=="Race/Ethnicity"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+    nrow(data1)==4 & colnames(data1[1])=="Age Class"~c("18-29 yoa","30-49 yoa", "50-65 yoa","65 and up yoa"),
+    nrow(data1)==3 & colnames(data1[1])=="Cancer?"~c("Yes", "No", "Unknown"),
+    nrow(data1)==3 & colnames(data1[1])=="Thyroid Issue?"~c("Yes", "No", "Unknown"),
+    nrow(data1)==4 & colnames(data1[1])=="Diabetes?"~c("Yes", "No", "Borderline", "Unknown")
+  )
 
+diagnosis<-function(df){
+  df$Diagnosis<-case_when(
+    nrow(df)==2 & colnames(df[1])=="Gender"~c("Female","Male"),
+    nrow(df)==6 & colnames(df[1])=="Race/Ethnicity"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+    nrow(df)==4 & colnames(df[1])=="Age Class"~c("18-29 yoa","30-49 yoa", "50-65 yoa","65 and up yoa"),
+    nrow(df)==3 & colnames(df[1])=="Cancer?"~c("Yes", "No", "Unknown"),
+    nrow(df)==3 & colnames(df[1])=="Thyroid Issue?"~c("Yes", "No", "Unknown"),
+    nrow(df)==4 & colnames(df[1])=="Diabetes?"~c("Yes", "No", "Borderline", "Unknown"))}
+
+data1<-phth1%>%
+  group_by(`Race/Ethnicity`)%>%
+  summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE))
+
+data1$Diagnosis<-case_when (
+  colnames(data1[1])=="Gender"~c("Female","Male"),
+  colnames(data1[1])=="Race/Ethnicity"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White")
+  # colnames(data1[1])=="Age Class"~c("18-29 yoa","30-49 yoa", "50-65 yoa","65 and up yoa"),
+  # colnames(data1[1])=="Cancer?"~c("Yes", "No", "Unknown"),
+  # colnames(data1[1])=="Thyroid Issue?"~c("Yes", "No", "Unknown"),
+  # colnames(data1[1])=="Diabetes?"~c("Yes", "No", "Borderline", "Unknown")
+)
+
+  ggplot(data1,aes(x=Diagnosis, y=mean_pht))+
+    geom_col()+xlab("Incidence of " )+ylab('Mean Phthalate Metabolite in Urine (ng/mL')+
+    ggtitle(       "Comparison of Phthalate Metabolite Excretion by " )
+
+  data<-phth1%>%
+      group_by(`Age Class`)%>%
+      summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE))  
+  
+  ggplot(data,aes(x=`Age Class`, y=mean_pht))+
+    geom_col()+xlab("Incidence of " ) +ylab('Mean Phthalate Metabolite in Urine (ng/mL')+
+    ggtitle(       "Comparison of Phthalate Metabolite Excretion by " )
+  
+  
+  
+  data2<-data1%>%
+    mutate(Diagnosis=case_when (
+      colnames(data1[1])=="Gender"~c("Female","Male"),
+      colnames(data1[1])=="Race/Ethnicity"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+      colnames(data1[1])=="Age Class"~c("18-29 yoa","30-49 yoa", "50-65 yoa","65 and up yoa"),
+      colnames(data1[1])=="Cancer?"~c("Yes", "No", "Unknown"),
+      colnames(data1[1])=="Thyroid Issue?"~c("Yes", "No", "Unknown"),
+      colnames(data1[1])=="Diabetes?"~c("Yes", "No", "Borderline", "Unknown")
+    ))
+  
+  # 
+  # data<-eventReactive(input$go, {phth1%>%
+  #   group_by(input$f1,input$f2,input$f3)%>%
+  #   summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE)%>%
+  #   mutate(Diagnosis= case_when (
+  #     input$f1=="Gender" & input$f2=="Blank" & input$f3=="Blank"~c("Female","Male")
+  #   input$f1=="Race/Ethnicity" & input$f2=="Blank" & input$f3=="Blank"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+  #   input$f1=="Age" & input$f2=="Blank" & input$f3=="Blank"~Diagnosis,
+  #   input$f1=="Cancer?" & input$f2=="Blank"& input$f3=="Blank"~c("Yes", "No", "Unknown"),
+  #   input$f1=="Thyroid Issue?" & input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Unknown"),
+  #   input$f1=="Diabetes?"& input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Borderline", "Unknown") 
+  # ))
+  
+  # input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank",
+  # input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Diabetes?" & input$f3=="Blank",
+  # input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
+  # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~c("Hispanic Male","Hispanic Female","Mexican American Female","Mexican American Male", "Non-Hispanic Asian Female","Non-Hispanic Asian Male","Non-Hispanic Black Female", "Non-Hispanic Black Male","Non-Hispanic Multi-racial Female", "Non-Hispanic Multi-racial Male","Non-Hispanic White Female", "Non-Hispanic White Male"),
+  # input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Gender"& input$f2=="Diabetes" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Borderline Diagnosis","Male-Borderline Diagnosis", "Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Age"& input$f2=="Gender" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
+  # # input$f1=="Age"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~,
+  # input$f1=="Age"& input$f2=="Cancer?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa", "Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"),
+  # input$f1=="Age"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa", "Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"),
+  # input$f1=="Age"& input$f2=="Diabetes?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa","Borderline Diagnosis 18-29 yoa" ,"Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Borderline Diagnosis 30-49 yoa","Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa","Borderline Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Borderline diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"))
+  # # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank" 
+  
+# data<-eventReactive(input$go, {phth1%>%
+#     group_by(input$f1,input$f2,input$f3)%>%
+#     summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE))
+#   mutate(Diagnosis= case_when (
+#     input$f1=="Gender" & input$f2="Blank" & input$f3="Blank"~c("Female","Male"),
+#     input$f1=="Race/Ethnicity" & input$f2="Blank" & input$f3="Blank"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+#     input$f1=="Age" & input$f2="Blank" & input$f3="Blank"~Diagnosis,
+#     input$f1=="Cancer?" & input$f2=="Blank"& input$f3=="Blank"~c("Yes", "No", "Unknown"),
+#     input$f1=="Thyroid Issue?" & input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Unknown"),
+#     input$f1=="Diabetes?"& input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Borderline", "Unknown")
+#     input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~
+#       input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"
+#     input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~
+#       input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~
+#       input$f1=="Gender"& input$f2=="Diabetes?" & input$f3=="Blank"
+#     input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
+#     input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~c("Hispanic Male","Hispanic Female","Mexican American Female","Mexican American Male", "Non-Hispanic Asian Female","Non-Hispanic Asian Male","Non-Hispanic Black Female", "Non-Hispanic Black Male","Non-Hispanic Multi-racial Female", "Non-Hispanic Multi-racial Male","Non-Hispanic White Female", "Non-Hispanic White Male"),
+#     input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+#     input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+#     input$f1=="Gender"& input$f2=="Diabetes" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Borderline Diagnosis","Male-Borderline Diagnosis", "Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+#     input$f1=="Age"& input$f2=="Gender" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa")
+#     input$f1=="Age"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~
+#       input$f1=="Age"& input$f2=="Cancer?" & input$f3=="Blank"~c("Positive 18-29 yoa",)
+#     input$f1=="Age"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~
+#       input$f1=="Age"& input$f2=="Diabetes?" & input$f3=="Blank"~
+#       input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"
+# 
+
+  
+  
+  # 
+  # data<-eventReactive(input$go, {phth1%>%
+  #   group_by(input$f1,input$f2,input$f3)%>%
+  #   summarise(mean_pht=mean(`Total Pht`,na.rm=TRUE)%>%
+  #   mutate(Diagnosis= case_when (
+  #     input$f1=="Gender" & input$f2=="Blank" & input$f3=="Blank"~c("Female","Male")
+  #   input$f1=="Race/Ethnicity" & input$f2=="Blank" & input$f3=="Blank"~c("Hispanic","Mexican American","Non-Hispanic Asian","Non-Hispanic Black","Non-Hispanic Multi-racial","Non-Hispanic White"),
+  #   input$f1=="Age" & input$f2=="Blank" & input$f3=="Blank"~Diagnosis,
+  #   input$f1=="Cancer?" & input$f2=="Blank"& input$f3=="Blank"~c("Yes", "No", "Unknown"),
+  #   input$f1=="Thyroid Issue?" & input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Unknown"),
+  #   input$f1=="Diabetes?"& input$f2=="Blank" & input$f3=="Blank"~c("Yes", "No", "Borderline", "Unknown") 
+  # ))
+  
+  # input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank",
+  # input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~,
+  # input$f1=="Gender"& input$f2=="Diabetes?" & input$f3=="Blank",
+  # input$f1=="Gender"& input$f2=="Age" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
+  # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~c("Hispanic Male","Hispanic Female","Mexican American Female","Mexican American Male", "Non-Hispanic Asian Female","Non-Hispanic Asian Male","Non-Hispanic Black Female", "Non-Hispanic Black Male","Non-Hispanic Multi-racial Female", "Non-Hispanic Multi-racial Male","Non-Hispanic White Female", "Non-Hispanic White Male"),
+  # input$f1=="Gender"& input$f2=="Cancer?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Gender"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Gender"& input$f2=="Diabetes" & input$f3=="Blank"~c("Female-Positive Diagnosis","Male-Positive Diagnosis", "Female-Negative Diagnosis", "Male-Negative Diagnosis","Female-Borderline Diagnosis","Male-Borderline Diagnosis", "Female-Unknown Diagnosis","Male-Unknown Diagnosis"),
+  # input$f1=="Age"& input$f2=="Gender" & input$f3=="Blank"~c("Female 18-29 yoa", "Male 18-29 yoa", "Female 30-49 yoa", "Male 30-49 yoa", "Female 50-65 yoa", "Male 50-65 yoa","Female 65 and up", "Male 65 and up yoa"),
+  # # input$f1=="Age"& input$f2=="Race/Ethnicity" & input$f3=="Blank"~,
+  # input$f1=="Age"& input$f2=="Cancer?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa", "Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"),
+  # input$f1=="Age"& input$f2=="Thyroid Issues?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa", "Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"),
+  # input$f1=="Age"& input$f2=="Diabetes?" & input$f3=="Blank"~c("Positive Diagnosis 18-29 yoa","Negative Diagnosis 18-29 yoa","Borderline Diagnosis 18-29 yoa" ,"Unknown Diagnosis 18-29 yoa","Positive Diagnosis 30-49 yoa","Negative Diagnosis 30-49 yoa", "Borderline Diagnosis 30-49 yoa","Unknown Diagnosis 30-49 yoa", "Positive Diagnosis 50-65 yoa","Negative Diagnosis 50-65 yoa","Borderline Diagnosis 50-65 yoa", "Unknown Diagnosis 50-65 yoa","Positive Diagnosis 65 and up yoa","Negative Diagnosis 65 and up yoa", "Borderline diagnosis 65 and up yoa", "Unknown Diagnosis 65 and up yoa"))
+  # # input$f1=="Gender"& input$f2=="Race/Ethnicity" & input$f3=="Blank"
 #Statistical Significance
 # See http://onlinestatbook.com/2/tests_of_means/difference_means.html
