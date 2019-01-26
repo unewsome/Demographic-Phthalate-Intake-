@@ -23,8 +23,10 @@ shinyServer(function(input, output) {
   })
   
   output$multiTable <- DT::renderDataTable(phth1%>%
-                                             group_by_(input$f1, input$f2, input$f3)%>%
+                                             group_by_(input$f2, input$f3, input$f4)%>%
                                              summarise(Mean_Pht=mean(Total_Pht, na.rm = TRUE)))
+}) 
   
 
-})
+
+

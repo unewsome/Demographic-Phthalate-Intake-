@@ -6,17 +6,43 @@ library(shinydashboard)
 shinyUI(fluidPage(theme = shinytheme("journal"),
   
                   
-titlePanel("Exploring Phthalate Metabolite Concentration"),
+titlePanel("Exploring Phthalate Metabolite Concentration for Various Populations"),
 
-dashboardPage(
-              dashboardHeader(title = "Pthalate Exposure Amongst Various Populations in 2015-2016",titleWidth = 600),
-              dashboardSidebar(tags$blockquote("Select a variable to investigate:"),
-                    radioButtons(inputId = "f1", label = "Variables",  choices = factors, selected = NULL)),
-              
-              
-              dashboardBody(
-                fluidRow(title = "Single Variable Phthalate Metabolite Visual Exploration", solidHeader = TRUE,
-                    plotOutput("phthPlot", height = 700, width =  700)))
+
+navlistPanel(
+  "Evaluate Variables",
+  
+  tabPanel("Single Variable", box(width = 2, radioButtons(inputId = "f1", label = "Variables",  choices = factors, selected = NULL)), box(width = 10, plotOutput("phthPlot", height = 600, width = 600))),
+  
+  tabPanel("Multiple Variables", fluidRow(box(width = 4, radioButtons(inputId = "f2", label = "Variables",  choices = factors)), box(width = 4, radioButtons(inputId = "f3", label = "Variables",  choices = factors)), box(width = 4, radioButtons(inputId = "f4", label = "Variables",  choices = factors))),
+                                 fluidRow(box(width = NULL, DT::dataTableOutput("multiTable")))
+                                 ),
+  tabPanel("Significance", textOutput("SS"))
+  
+
+
+)
+)
+
+)
+
+
+
+
+
+
+
+
+
+# dashboardPage(
+#               dashboardHeader(title = "Pthalate Exposure Amongst Various Populations in 2015-2016",titleWidth = 600),
+#               dashboardSidebar(tags$blockquote("Select a variable to investigate:"),
+#                     radioButtons(inputId = "f1", label = "Variables",  choices = factors, selected = NULL)),
+#               
+#               
+#               dashboardBody(
+#                 fluidRow(title = "Single Variable Phthalate Metabolite Visual Exploration", solidHeader = TRUE,
+#                     plotOutput("phthPlot", height = 700, width =  700)))
               
                   # tabPanel("Multiple Variable",  
                   #          box(title = "Multiple Variable Phthalate Metabolite Dataset Exploration", status="success", solidHeader = TRUE,
@@ -24,11 +50,11 @@ dashboardPage(
                   #          fluidRow(box(tags$blockquote("In evaluating the average phthalate metabolite concentration, are the representative samples statistically different from the entire population?")))
                            
                            
-                           
-                  )
-                )
-                
-              )    
+              #              
+              #     )
+              #   )
+              #   
+              # )    
 
 
 
