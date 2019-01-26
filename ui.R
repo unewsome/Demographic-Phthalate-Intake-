@@ -8,25 +8,20 @@ shinyUI(fluidPage(theme = shinytheme("journal"),
                   
 titlePanel("Exploring Phthalate Metabolite Concentration"),
 
-dashboardPage(skin = "red",
+dashboardPage(
               dashboardHeader(title = "Pthalate Exposure Amongst Various Populations in 2015-2016",titleWidth = 600),
-              dashboardSidebar(tags$blockquote("Select a variable to investigate:")),
-                               # checkboxInput("f1", 
-                               #             label = "Choose one variable", 
-                               #             factors)),
+              dashboardSidebar(tags$blockquote("Select a variable to investigate:"),
+                    radioButtons(inputId = "f1", label = "Variables",  choices = factors, selected = NULL)),
               
               
               dashboardBody(
-                fluidRow(""), 
-                
-                tabsetPanel(
-                  tabPanel("Single Variable", box(
-                    title = "Single Variable Phthalate Metabolite Visual Exploration", status="success", solidHeader = TRUE,
-                    plotOutput("phthPlot", height = 600, width =  600))), 
-                  tabPanel("Multiple Variable",  
-                           box(title = "Multiple Variable Phthalate Metabolite Dataset Exploration", status="success", solidHeader = TRUE,
-                               DT::dataTableOutput("multiTable", height = 600, width = 600)),
-                           fluidRow(box(tags$blockquote("In evaluating the average phthalate metabolite concentration, are the representative samples statistically different from the entire population?")))
+                fluidRow(title = "Single Variable Phthalate Metabolite Visual Exploration", solidHeader = TRUE,
+                    plotOutput("phthPlot", height = 700, width =  700)))
+              
+                  # tabPanel("Multiple Variable",  
+                  #          box(title = "Multiple Variable Phthalate Metabolite Dataset Exploration", status="success", solidHeader = TRUE,
+                  #              DT::dataTableOutput("multiTable", height = 600, width = 600)),
+                  #          fluidRow(box(tags$blockquote("In evaluating the average phthalate metabolite concentration, are the representative samples statistically different from the entire population?")))
                            
                            
                            
@@ -34,10 +29,7 @@ dashboardPage(skin = "red",
                 )
                 
               )    
-)
-)
 
-)
 
 
 
