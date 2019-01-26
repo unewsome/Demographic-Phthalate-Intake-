@@ -15,10 +15,12 @@ navlistPanel(
   tabPanel("Single Variable", box(width = 2, radioButtons(inputId = "f1", label = "Variables",  choices = factors, selected = NULL)), box(width = 10, plotOutput("phthPlot", height = 600, width = 600))),
   
   tabPanel("Multiple Variables", fluidRow(box(width = 4, radioButtons(inputId = "f2", label = "Variables",  choices = factors)), box(width = 4, radioButtons(inputId = "f3", label = "Variables",  choices = factors)), box(width = 4, radioButtons(inputId = "f4", label = "Variables",  choices = factors))),
-                                 fluidRow(box(width = NULL, DT::dataTableOutput("multiTable")))
+                                 fluidRow(box(width = 11, DT::dataTableOutput("multiTable")))
                                  ),
-  tabPanel("Significance", textOutput("SS"))
-  
+  tabPanel("Significance",fluidRow(box(width = 2, radioButtons(inputId = "f5", label = "Conditions", choices = conditions)),box(width = 3, uiOutput("Significance")))),
+    tags$style(type="text/css", #Code suppresses error message when no input is selected
+             ".shiny-output-error { visibility: hidden; }",
+             ".shiny-output-error:before { visibility: hidden; }")
 
 
 )

@@ -371,6 +371,15 @@ data1$Diagnosis<-case_when (
       colnames(data1[1])=="Diabetes?"~c("Yes", "No", "Borderline", "Unknown")
     ))
   
+  see <- phth1%>%
+    filter(Race_Ethnicity=="Mexican American")
+  
+  
+  t <- t.test(see$Total_Pht,phth1$Total_Pht, var.equal = FALSE)
+  
+  tstat <- t[["statistic"]]
+  
+  
   # 
   # data<-eventReactive(input$go, {phth1%>%
   #   group_by(input$f1,input$f2,input$f3)%>%
