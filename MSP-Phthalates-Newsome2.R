@@ -380,6 +380,7 @@ data1$Diagnosis<-case_when (
   tstat <- t[["statistic"]]
   
   
+  
   # 
   # data<-eventReactive(input$go, {phth1%>%
   #   group_by(input$f1,input$f2,input$f3)%>%
